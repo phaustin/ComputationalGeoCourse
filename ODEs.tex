@@ -1,0 +1,402 @@
+\documentclass[12pt,legal]{article}
+\usepackage{theorem,ifthen,algorithm,algorithmic}
+\usepackage{amssymb,amsfonts,amsmath,latexsym,dsfont}
+\usepackage{tikz,pgflibraryplotmarks}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+
+
+\graphicspath{{images/}{./}}
+
+\usepackage{boxedminipage}
+
+\usepackage{pgf,pgfarrows} %% pdf-drawing package
+\usepackage{subfigure} %% pdf-drawing package
+
+\newcommand{\FrameboxA}[2][]{#2}
+\newcommand{\Framebox}[1][]{\FrameboxA}
+\newcommand{\Fbox}[1]{#1}
+
+%\usepackage[round]{natbib}
+
+\newcommand{\half}{\mbox{\small \(\frac{1}{2}\)}}
+\newcommand{\hf}{{\frac 12}}
+
+
+\newcommand{\curl}{\ensuremath{\nabla\times\,}}
+\newcommand{\curlc}{\ensuremath{\nabla_{{\boldsymbol \xi}}\times\,}}
+\renewcommand{\div}{\nabla\cdot\,}
+\newcommand{\grad}{\ensuremath{\nabla}}
+
+\newcommand{\bfA}{{\bf A}}
+\newcommand{\bfB}{{\bf B}}
+\newcommand{\bfC}{{\bf C}}
+\newcommand{\bfD}{{\bf D}}
+\newcommand{\bfE}{{\bf E}}
+\newcommand{\bfF}{{\bf F}}
+\newcommand{\bfG}{{\bf G}}
+\newcommand{\bfH}{{\bf H}}
+\newcommand{\bfI}{{\bf I}}
+\newcommand{\bfJ}{{\bf J}}
+\newcommand{\bfK}{{\bf K}}
+\newcommand{\bfL}{{\bf L}}
+\newcommand{\bfM}{{\bf M}}
+\newcommand{\bfN}{{\bf N}}
+\newcommand{\bfO}{{\bf O}}
+\newcommand{\bfP}{{\bf P}}
+\newcommand{\bfQ}{{\bf Q}}
+\newcommand{\bfR}{{\bf R}}
+\newcommand{\bfS}{{\bf S}}
+\newcommand{\bfT}{{\bf T}}
+\newcommand{\bfU}{{\bf U}}
+\newcommand{\bfV}{{\bf V}}
+\newcommand{\bfW}{{\bf W}}
+\newcommand{\bfX}{{\bf X}}
+\newcommand{\bfY}{{\bf Y}}
+\newcommand{\bfZ}{{\bf Z}}
+
+\newcommand{\bfa}{{\bf a}}
+\newcommand{\bfb}{{\bf b}}
+\newcommand{\bfe}{{\bf e}}
+\newcommand{\bfh}{{\bf h}}
+\newcommand{\bfj}{{\bf j}}
+\newcommand{\bfk}{{\bf k}}
+\newcommand{\bfi}{{\bf i}}
+\newcommand{\bfs}{{\bf s}}
+\newcommand{\bfx}{{\bf x}}
+\newcommand{\bfy}{{\bf y}}
+\newcommand{\bfu}{{\bf u}}
+\newcommand{\bfq}{{\bf q}}
+\newcommand{\bfp}{{\bf p}}
+\newcommand{\bfn}{{\bf n}}
+\newcommand{\bfd}{{\bf d}}
+\newcommand{\bfm}{{\bf m}}
+\newcommand{\bfr}{{\bf r}}
+\newcommand{\bff}{{\bf f}}
+\newcommand{\bfv}{{\bf v}}
+\newcommand{\bfw}{{\bf w}}
+\newcommand{\bfz}{{\bf z}}
+
+
+
+\newcommand{\bfphi}{{\boldsymbol \Phi}}
+\newcommand{\bfpsi}{{\boldsymbol \psi}}
+\newcommand{\bfepsilon}{{\boldsymbol \epsilon}}
+\newcommand{\bfLambda}{{\boldsymbol \Lambda}}
+\newcommand{\bflambda}{{\boldsymbol \lambda}}
+\newcommand{\bfSigma}{{\boldsymbol \Sigma}}
+
+\newcommand{\diag}{{\sf{diag}}\,}
+
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+
+\newcommand{\trace}{\mathsf{trace}}
+\newcommand{\st}{\mathrm{s.t.}}
+
+
+\newcommand{\R}{\ensuremath{\mathds{R}}}
+\newcommand{\abs}[1]{\ensuremath{\left|#1\right|}}
+\newcommand{\norm}[1]{\ensuremath{\left\|#1\right\|}}
+\newcommand{\iprod}[1]{\ensuremath{\left\langle#1\right\rangle}}
+
+\newcommand{\dwu}{\delta \widehat u}
+\newcommand{\dwx}{\delta \widehat x}
+\newcommand{\Mu}{M_{\mu}}
+\newcommand{\hv}{\hat v}
+
+\newcommand{\curlxi}{{\widehat \nabla_{\bfxi} \times}}
+
+\newcommand{\bfxi}{{ {\boldsymbol \xi}}}
+\newcommand{\wq}{{\widehat q}}
+
+\newcommand{\e}{{\cal E }}
+\newcommand{\h}{{\cal H }}
+\renewcommand{\j}{{\cal J }}
+\renewcommand{\b}{{\cal B }}
+
+
+
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proof}{Proof}
+\newtheorem{example}{Example}
+
+\begin{document}
+\title{Particle flow and ODE's}
+\author{Eldad Haber\thanks{Department of Earth and Ocean Science, The University of British Columbia, Vancouver, BC, Canada}}
+
+\maketitle
+
+
+Knowing how to approximate derivatives has many direct applications. As we see next,
+many problems in science and engineering can be formed as a system of ordinary differential equations. Solving such problems can be used in order to predict for example, slope integrity and the motion of fluids. In this chapter we discuss the solution of initial value problems motivated by the motion of particles in fluids, that has application in contaminant transport and many other fields.
+
+\section{Particle flow}
+
+Assume that a polluted material is released into the atmosphere or into the ground water and we would like to find where would it go.
+To this end we have to ask ourselves, why would the material go anywhere?
+The answer is usually composed of two parts
+\begin{itemize}
+\item The material diffuses away (Brownian motion)
+\item The material is carried away (transported) by fluids (wind, water flow etc.) 
+\end{itemize}
+
+This first phenomena is often refers to as diffusion and the second is often called advection or transport. For the problems in this chapter we will assume that the diffusion is much smaller than advection. Our goal is to study advection based processes and to be able to predict where would a contaminant material end up given the flow field and its initial location.  
+
+\bigskip 
+
+Rather than dealing with a contaminated fluid directly, we {\em discretize} the fluid into particles. Each particle is assumed to have the same mass. We place the particles initially, such that the overall mass is equivalent to the mass of the continuous fluid. We then trace the particles over time. This is demonstrated in Figure~\ref{particles}
+\begin{figure}
+\begin{center}
+\includegraphics[width=8cm]{particles}
+\caption{A fluid is discretized by many particles. We track the particles and follow the fluid. \label{particles}}
+\end{center}
+\end{figure}
+
+The advantage of this approach is that, as we see next, tracing a particle is a relatively easy problem and therefore, we can trace the fluid by tracing the particles.
+
+Let us start by tracking a single particle.
+Consider a fluid that flows in 2D or 3D, that has a velocity field $\vec v(\vec x,t)$.
+Now, assume that we put a particle at location $\vec x_0$ at time $t=0$.
+We can ask, when will the particle be at time $T$?
+Assuming that the particle flow with the fluid (at the same velocity), that is, there is no drag, we can write the simple differential equation
+\begin{eqnarray}
+\label{simpleEq}
+{\frac {d\vec x}{dt}} = \vec v(\vec x,t) \quad \vec x(t=0) = \vec x_0
+\end{eqnarray}
+The equation implies that the change in the location of the particle is given by the velocity of the fluid.
+This equation is written in vector form. If we write it in component form, in 2D, 
+we have that $\vec x = [x,y]^{\top}$ and $\vec v = [u,v]^{\top}$ and therefore
+\begin{eqnarray}
+\label{simpleEqCompForm}
+{\frac {d}{dt}} \begin{pmatrix} x \\ y \end{pmatrix}  =
+\begin{pmatrix} u(x,y,t) \\ v(x,y,t) \end{pmatrix} 
+\quad  \begin{pmatrix} x(t=0) \\ y(t=0) \end{pmatrix} = 
+ \begin{pmatrix} x_0 \\ y_0 \end{pmatrix}
+\end{eqnarray}
+
+This problem is nonlinear since $u$ and $v$ are functions of $x$ and $y$.
+We now study how to solve such problems in general
+
+\section{Solving a linear ordinary differential equation}
+
+Before we solve the system of nonlinear equations let us start by  studying linear systems of equations.
+As usual, we start simple, and assume that we have a single equation of constant coefficients that is
+$$ {\frac {dy}{dt}} = \lambda y  + f(t) \quad y(0) = y_0$$
+where $\lambda$ is constant.
+
+Let us show how this is solved systematically.
+
+First, we note that the equation is linear (why?). This implies that we can separate the equation into two parts and then put them back together.
+We thus look at two equations
+\begin{subequations}
+\label{tp}
+\begin{eqnarray}
+\label{ode1}
+ {\frac {dy_1}{dt}} - \lambda y_1   = 0 \quad y_1(0) = y_0\\
+ \label{ode2}
+  {\frac {dy_2}{dt}} - \lambda y_2 = f(t) \quad y_2(0) = 0
+\end{eqnarray}
+\end{subequations}
+And the linearity implies that the solution is simple
+$$ y(t) = y_1(t) + y_2(t).$$
+
+Equation \eqref{ode1} is a homogeneous equation with non-homogeneous initial condition while equation \eqref{ode2} is a nonhomogeneous equation with a homogeneous initial condition. It is easier to solve each equation than to solve the combined one. 
+
+Let us start with the second equation. 
+We multiply the equation by $\exp(-\lambda t)$ obtaining
+$$   \exp(-\lambda t){\frac {dy_2}{dt}} - \lambda y_2 \exp(-\lambda t) = f(t)\exp(-\lambda t) $$
+Now, note that the left hand side can be simply written as
+$${\frac d {dt}}  \left(\exp(-\lambda t)y_2 \right) = f(t)\exp(-\lambda t). $$
+This implies that
+$$ \exp(-\lambda t)y_2 = \int_0^t f(\tau)\exp(-\lambda \tau) d\tau $$
+and therefore
+$$y_2 = \exp(\lambda t)\int_0^t f(\tau)\exp(-\lambda \tau) d\tau $$
+
+
+Next, we look at the first equation. Note that
+$$  {\frac {dy_1}{y_1}} = \lambda dt  $$ 
+Integrating both sides we obtain
+$$  \int {\frac {dy_1}{y_1}} = \int \lambda dt  $$
+and
+$$ \log(y_1)  = \lambda t + c $$
+which implies that
+$$ y_1 = a \exp(\lambda t) $$
+with $a = \exp(c)$ is an integration constant.
+
+To determine $a$ we need to look at the initial condition.
+Assuming that $y_2(0) = y_0$ we obtain that
+$$ y_2 = y_0\exp(\lambda t).$$
+
+Putting it all together we obtain that 
+\begin{eqnarray}
+y =  \exp(\lambda t) \left( y_0 + \int_0^t f(\tau)\exp(-\lambda \tau) d\tau  \right)
+\end{eqnarray}
+
+
+\subsection{Exercises}
+
+\begin{enumerate}
+\item Solve the following ODEs
+\begin{enumerate}
+\item
+\begin{eqnarray*}
+ \dot y &=& -y + \exp(-t) \quad. y(0) = 1 \\
+2 \dot y &=& y + 4\sin(3t) \quad y(0) = y_0\\
+\end{eqnarray*}
+
+ \item A falling object in a gravitational field obeys the equation
+ $$ \dot v = g - \alpha v \quad \quad v(0) = 0 $$
+ where $v$ is its velocity, $g$ is the gravitational constant and $\alpha$ is a drag coefficient.
+ \begin{enumerate}
+ \item
+ Derive an expression for the velocity of the body as a function of time.
+ \item Given $g=9.8$ and assume that the velocity of the free falling paratrooper after 10 second is only 65m/s approximately find her drag coefficient, $\alpha$.
+ \end{enumerate}
+ 
+ \end{enumerate}
+ \item Use the derivation above to extend the solution to the case that
+$\lambda$ is not constant, that is, $\lambda = \lambda(t)$. Assume that $\Lambda(t) = \int \lambda(t) dt$
+
+\item Use your solution to solve the problem
+$$ t \dot y - 2y = t^5\sin(2t) - t^3 + 4t^4 \quad \quad  y(\pi) = \frac 32 \pi^4 $$
+\end{enumerate}
+
+\bigskip
+
+\section{Types of ODE's}
+
+In general, we assume that $\lambda$ can be a complex number. Before we go on, let us discuss three cases that characterize the behavior of the solution of the ODE. This is going to be determined by the sign of the real part of $\lambda$
+\begin{itemize}
+\item if $Re(\lambda) > 0$ then the solution is exponentially growing. These types of equations are often refer to as unstable. This is because a small perturbation in the initial condition will result in very large perturbation at late time.
+\item if $Re(\lambda) = 0$ and $Im(\lambda)\not=0$ then the system is oscillatory.  
+This means that the energy of the system is bounded and that the solution will not be damped even in very long time.
+\item 
+if $Re(\lambda) < 0$ then the problem is dissipative, that is, the solution decays in time and approaches $0$ at $t\rightarrow \infty$.
+\end{itemize}
+
+
+Whenever you deal with an ODE you should {em always}  ask yourself what category of ODE you are dealing with and is it reasonable to the problem that you study.
+
+
+\section{Higher order ODE's and systems of ordinary differential equations}
+
+In the above we have seen that it is straight forward to solve a simple linear  scalar differential equation. This can be used in order to solve more complex problems.
+
+\bigskip
+
+{\em{{\bf {Example}}: The spring. \\
+A spring is modeled by its rest length  and its resistance to force.
+If we assume that the force on the spring that is not in rest is linearly dependent on its displacement from this rest state then we have that
+$$ m \ddot{x} = -k^2 x. $$
+
+
+To solve this problem we want to utilize what we did for a problem with a single variable. To this end we introduce a new variable, velocity, $v$ defined as
+$v=\dot{x}$.
+We can now rewrite the problem as
+\begin{eqnarray*}
+\dot{x} &=& v \\
+\dot{v} &=& -{\frac {k^2}{m}} x.
+\end{eqnarray*}
+It is convenient and important to write this as a linear system of the form
+$$ {\frac d{dt}} \begin{pmatrix} x \\ v \end{pmatrix}
+= \begin{pmatrix} 0  &  1 \\  -{\frac {k^2}{m}} & 0 
+\end{pmatrix}\begin{pmatrix} x \\ v \end{pmatrix}. $$}}
+
+\bigskip
+
+The idea of adding variables and obtaining a first order system of equations
+is very general and can be applied to arbitrary order ODE's.
+
+{\em{{\bf{Exercise}}: Use the derivation above convert the ODE
+$$ 4{\frac {d^4y}{dt^4}} + 3{\frac {d^3y}{dt^3}} + 2{\frac {d^2y}{dt^2}}  +
+{\frac {dy}{dt}} - a y = 0$$
+into a linear system of first order ODE's. }}
+
+\bigskip
+
+Let us recap. The idea here is that we are able to transform any higher order equation into a system of first order. Thus, from now on, we will study the system
+$$ \dot{\bfy} = {\bf A} \bfy $$
+where $\bfA$ is some matrix.
+As we see next the solution and its properties depend on the properties of the matrix $\bfA$. We thus review a little necessary linear algebra.
+
+\subsection{Review - eigenvalues and eigenvectors }
+
+The solution of ODE's is intimately  connected to the properties of the matrix $\bfA$. In particular, it depends on the eigenvalues of the matrix. An eigenvalue-eigenvector pair is defined through the equation
+$$ \bfA \bfu = \lambda \bfu \quad \quad \|\bfu\|^2 = 1. $$
+An $n\times n$ matrix has, $n$ eigenvalues and eigenvectors.
+Let $\bfU = [\bfu_1, \dots,\bfu_n]$ be the eigenvectors of the system
+and let $\bfLambda = {\rm diag}(\lambda_1,\ldots,\lambda_n)$ be a diagonal matrix that contains the eigenvalues of the system on its diagonal.
+We then have that
+$$ \bfA \bfU =  \bfU \bfLambda. $$
+Multiplying from the left in $\bfU^{-1}$ we obtain that
+$$ \bfU^{-1} \bfA \bfU =  \bfLambda. $$
+or multiplying from the right in $\bfU^{-1}$ we obtain that
+$$ \bfA = \bfU \bfLambda \bfU^{-1}.$$
+The decomposition into eigenvalue eigenvector pair is called the Schur decomposition. As we see next the decomposition is crucial for the solution
+of ODE's.
+
+\bigskip
+
+Before we go on, we shortly discuss how to manually compute the decomposition for a small system.
+
+The eigenvalue/vector system implies that
+$$ \bfA \bfu - \lambda \bfu = ( \bfA  - \lambda \bfI) \bfu = 0. $$
+
+A linear system that has a zero right hand side, without a trivial solution (that is $\bfu \not=0$ must have a zero determinant. Therefore, we can solve for $\lambda$ by solving the polynomial equation
+$$ {\rm det}  ( \bfA  - \lambda \bfI)  = 0. $$
+
+\bigskip
+
+{\em {\bf {Example:}}
+Find the eigenvalues and vectors of the matrix 
+$$ \begin{pmatrix} -2   & 1  \\ 1  & -2 \end{pmatrix} $$
+This can be found by solving the quadratic equation
+$$ (-2-\lambda)^2 -1 = 0. $$}
+
+
+\subsection{Solving a linear system of ODE's with constant coefficients}
+
+The eigenvalue decomposition can help in solving any linear systems of ODE
+with constant coefficients. To do that we write
+$$ \dot \bfy = \bfA \bfy =  \bfU \bfLambda \bfU^{-1} \bfy. $$
+Multiplying by $\bfU^{-1}$ on both sides we obtain
+$$ \bfU^{-1} \dot \bfy = \bfLambda \bfU^{-1} \bfy. $$
+Since $\bfU$ is independent of time we have that
+$$ \bfU^{-1} {\frac {d\bfy}{dt}} = {\frac {d(\bfU^{-1}\bfy)}{dt}}. $$
+
+Introducing a new variable $\bfz = \bfU^{-1} \bfy$ we can now rewrite the ODE
+as
+$$ \dot \bfz = \bfLambda \bfz. $$
+
+The important observation is that this system is decoupled, that is, it has $n$ {\em independent} systems of the form $\dot z_j = \lambda_j z_j$
+with a solution of the form
+$$ z_j = (z_0)_j\exp(\lambda_j t) $$
+where $(z_0)_j$ is the initial condition of the $j$-th component.
+
+Therefore, we have that
+$$ \bfz = \exp(t \bfLambda) \bfz_0. $$
+Going back from $\bfz_0$ to $\bfy$ we have that
+$$ \bfU^{-1} \bfy = \exp(t \bfLambda) \bfU^{-1} \bfy_0. $$
+Where the $\exp(t \bfLambda) = {\rm diag} (\exp(t \bflambda_1),\ldots,(\exp(t \bflambda_n)$.
+
+Finally, multiplying with $\bfU$ we obtain that
+$$ \bfy(t) = \bfU \exp(t \bfLambda) \bfU^{-1} \bfy_0. $$
+
+It is common to define the {\em exponent} of a matrix by the above definition.
+That is
+$$ \exp(\bfA) =  \bfU \exp(\bfLambda) \bfU^{-1}.$$
+This definition of the exponent allows us to quickly define the solution
+of the linear system to be
+$$ \bfy(t) = \exp(t \bfA)\bfy_0. $$
+
+{\em {\bf {Example:}}
+Solve  the linear system
+$$ {\frac {d}{dt}} \begin{pmatrix} y_1  \\ y_2 \end{pmatrix} = \begin{pmatrix} -2   & 1  \\ 1  & -2 \end{pmatrix}
+\begin{pmatrix} y_1  \\ y_2 \end{pmatrix}
+ $$}
+
+
+\end{document}
