@@ -1,0 +1,467 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%matplotlib inline\n",
+    "import torch\n",
+    "import numpy as np\n",
+    "import timeit\n",
+    "import matplotlib.pyplot as plt\n",
+    "import matplotlib"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## What will we be doing\n",
+    "\n",
+    "1. Learn 3 techniques to solve ODEs\n",
+    "2. Program them\n",
+    "3. Plot them\n",
+    "\n",
+    "This time we will be using PyTorch so you'll have a chance to experience the package."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# The forward Euler method\n",
+    "\n",
+    "We assume a general nonlinear system of Ordinary Differential Equations of the form\n",
+    "$$ \\dot{\\bf y} = f({\\bf y},t) \\quad \\quad {\\bf y}(0) = {\\bf y})_0. $$\n",
+    "\n",
+    "Using a simple finite difference approximation to the derivative we obtain\n",
+    "$$ {\\frac {{\\bf y}_{j+1} - {\\bf y}_j}{h}}  = f({\\bf y}_j,t_j) + {\\cal O}(h) $$\n",
+    "\n",
+    "Yielding the approximation\n",
+    "$$ {\\bf y}_{j+1} = {\\bf y}_j  + hf({\\bf y}_j,t_j) $$\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The forward Euler method can be easily coded "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def forwardEuler(f,h,n,y0):\n",
+    "    \n",
+    "    k = y0.shape[0]\n",
+    "    Y = torch.zeros(k,n+1)\n",
+    "    Y[:,0] = y0\n",
+    "    \n",
+    "    t = 0.0\n",
+    "    for j in range(n):\n",
+    "        Y[:,j+1] = Y[:,j] + h*f(Y[:,j],t) \n",
+    "        t += h\n",
+    "\n",
+    "    return Y"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Let us test the code"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Define our own function\n",
+    "def yfun(y,t):\n",
+    "    return -y"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "h = 0.01\n",
+    "n = 1000\n",
+    "y0 = torch.ones(2); y0[1] = -1.0\n",
+    "Y = forwardEuler(yfun,h,n,y0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The analytic solution is $\\exp(-t)$ so this looks good. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "t = np.arange(0,n+1)*h\n",
+    "# The solutions \n",
+    "plt.figure(1)\n",
+    "plt.plot(t,Y[0,:],t,Y[1,:], t, np.exp(-t),t, -np.exp(-t));\n",
+    "plt.title('Numerical vs analytical solution')\n",
+    "# The error\n",
+    "plt.figure(2)\n",
+    "plt.plot(t,Y[0,:].numpy()-np.exp(-t),t,Y[1,:].numpy()+np.exp(-t));\n",
+    "plt.title('Error in the Numerical vs analytical solution')\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "But let us run this again with a few choices of step size $h$."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for i in range(8):\n",
+    "    h = 0.25*(i+1)\n",
+    "    n = np.int(10/h)\n",
+    "    y0 = torch.ones(2); y0[1] = -1.0\n",
+    "    Y = forwardEuler(yfun,h,n,y0)\n",
+    "    t = np.arange(0,n+1)*h\n",
+    "    plt.figure(i+1)\n",
+    "    plt.plot(t,Y[0,:],t,np.exp(-t))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The solution starts reasonable but then it simply deviates from the analytic solution and starts to diverge. The question is why and how can we fix it."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Stability of the solution\n",
+    "\n",
+    "Using a numerical method to solve an ODE does not always guarantees reasonable results. Maybe the obvious problem is stability of the solution.\n",
+    "\n",
+    "Consider the simplest case of the ODE\n",
+    "$$ \\dot{y} = \\lambda y $$\n",
+    "and assume that $Re(\\lambda) \\le 0$. The solution of this problem is non-increasing.\n",
+    "\n",
+    "Now consider the forward Euler solution to this problem that reads\n",
+    "$$ y_{j+1} = (1 + h \\lambda) y_j. $$.\n",
+    "Since the continuous ODE is non-increasing we need to have the\n",
+    "solution of the discrete ODE to be non-increasing as well.\n",
+    "This can happen only if\n",
+    "$$ | 1 + h \\lambda | \\le 1. $$ \n",
+    "\n",
+    "Remember that $\\lambda$ is a complex number $\\lambda = \\lambda_r + i \\lambda_i$ and the condition above implies that\n",
+    "$$ (1 + h\\lambda_r)^2 + h^2\\lambda_i^2 \\le 1 $$\n",
+    "Reorganizing we obtain that\n",
+    "$$ h(\\lambda_r^2 + \\lambda_i^2) = h|\\lambda |^2  \\le -2\\lambda_r. $$\n",
+    "\n",
+    "\n",
+    "If $Re(\\lambda) < 0$ then this condition tells us that $h$ needs to be small enough. However, note that if $\\lambda$ is purely imaginary then there is {\\bf no step} that yields a non-increasing solution and the forward Euler method fails.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# The backward Euler and the trapezoidal methods\n",
+    "\n",
+    "To deal with the stability issue of the forward Euler it is possible to use a different discretization.\n",
+    "To this end we use a different approximation to the derivative in order to obtain a stable method\n",
+    "\n",
+    "The backward Euler method uses the backward difference formula. in order to\n",
+    "approximate the ODE\n",
+    "\\begin{eqnarray}\n",
+    "{\\bf y}_{j+1} - {\\bf y}_j = h f({\\bf y}_{j+1},t_{j+1})\n",
+    "\\end{eqnarray}\n",
+    "\n",
+    "This is an {\\bf implicit} method. The function $\\bf y_{j+1}$ at times $t_{j+1}$ needs to\n",
+    "be solved from the equation. This, in many cases cannot be done analytically\n",
+    "and numerical methods need to be used to solve the problem.\n",
+    "Given this added complexity one may ask, why do we need such a technique?\n",
+    "\n",
+    "A quick repeat of the stability analysis above yields that the method is unconditionaly stable.\n",
+    "\n",
+    "\n",
+    "The trapezoidal method use the trapezoidal method of integration to obtain\n",
+    "\\begin{eqnarray}\n",
+    "{\\bf y}_{j+1} - {\\bf y}_j = {\\frac h2}\\left( f({\\bf y}_{j+1},t_{j+1}) + f({\\bf y}_{j},t_{j})\\right)\n",
+    "\\end{eqnarray}\n",
+    "\n",
+    "This is an implicit method as well. However, it is second order and has some nice properties that we will resolve next.\n",
+    "\n",
+    "\n",
+    "# Class assignment\n",
+    "Use the same analysis we have done for the forward Euler method to show that the backward Euler method and the trapezoidal methods are unconditionally stable."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Using Implicit Methods to solve a linear system of ODEs\n",
+    "\n",
+    "Coding an implicit ODE solver require us to solve a nonlinear system of equations and therefore requires more numerics than we have now. However, for linear systems it is possible to use implicit methods and to write efficient codes for that.\n",
+    "\n",
+    "To this end assume that\n",
+    "$$ \\dot {\\bf y} = {\\bf A}(t) {\\bf y} + f(t)$$\n",
+    "The backward Euler method for this problem reads\n",
+    "$$  \\left({\\bf I} - h {\\bf A}(t_{j+1}) \\right) {\\bf y}_{j+1} = {\\bf y}_{j} + hf(t_{j+1}) $$\n",
+    "\n",
+    "Solving the system we obtain\n",
+    "$$  {\\bf y}_{j+1} = \\left({\\bf I} - h {\\bf A}(t_{j+1}) \\right)^{-1}  \\left( {\\bf y}_{j} + hf(t_{j+1}) \\right) $$\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Quick review - solving linear systems\n",
+    "\n",
+    "Solving linear systems is one of the cornerstones of scientific computing and it appears in numerous applications in science and engineering. In general, the goal is to find a vector ${\\bf x}$ that solves the linear system\n",
+    "$$ {\\bf A} {\\bf x} = {\\bf b} $$\n",
+    "\n",
+    "For example, the solution of the system \n",
+    "$$ \\begin{pmatrix} -2 & 1 \\\\ 1 & -2 \\end{pmatrix}\n",
+    "\\begin{pmatrix} {\\bf x}_1 \\\\ {\\bf x}_2 \\end{pmatrix} = \n",
+    "\\begin{pmatrix} 1 \\\\ 2 \\end{pmatrix} $$\n",
+    "is ${\\bf x} = -[\\frac 43, \\frac 53]$.\n",
+    "\n",
+    "There are a number of methods to solve linear systems. Commonly the matrix ${\\bf A}$ is decomposed into a lower trangular\n",
+    "and an upper triangular systems\n",
+    "$$ {\\bf A} = {\\bf L}{\\bf U}. $$\n",
+    "\n",
+    "For the example above\n",
+    "$$ \\begin{pmatrix} -2 & 1 \\\\ 1 & -2 \\end{pmatrix} =\n",
+    "\\begin{pmatrix} 1 & 0 \\\\ -0.5 & 1 \\end{pmatrix} \\begin{pmatrix} -2 & 1 \\\\ 0 & -1.5 \\end{pmatrix} $$\n",
+    "\n",
+    "We can then solve the system by forward/backward substitutions\n",
+    "$$ {\\bf A}{\\bf x} = {\\bf L}{\\bf U}{\\bf x} ={\\bf b} $$\n",
+    "Then, solve (by forward substitution)\n",
+    "$$  {\\bf L}{\\bf z} ={\\bf b}  \\quad {\\rm where} \\quad {\\bf z} = {\\bf U}{\\bf x}$$\n",
+    "and finally solve (by backward substitution\n",
+    "$$  {\\bf U}{\\bf x} = {\\bf z} $$ \n",
+    "\n",
+    "It is important to remember that not all linear systems are solvable. For example, the system\n",
+    "$$ \\begin{pmatrix} 1 & 1 \\\\ 1 & 1 \\end{pmatrix}\n",
+    "\\begin{pmatrix} {\\bf x}_1 \\\\ {\\bf x}_2 \\end{pmatrix} = \n",
+    "\\begin{pmatrix} 1 \\\\ 2 \\end{pmatrix} $$\n",
+    "Has no solution (why?)\n",
+    "\n",
+    "Similarly, the linear system\n",
+    "$$ \\begin{pmatrix} 1 & 1 \\\\ 1 & 1+\\epsilon \\end{pmatrix}\n",
+    "\\begin{pmatrix} {\\bf x}_1 \\\\ {\\bf x}_2 \\end{pmatrix} = \n",
+    "\\begin{pmatrix} 1 \\\\ 2 \\end{pmatrix} $$\n",
+    "has a solution, but as $\\epsilon \\rightarrow 0$ the solution becomes unstable and in finite precision cannot be obtained\n",
+    "in any reliable way. This is often refers to as ill-conditioning.\n",
+    "\n",
+    "Most scientific software packages has implemented some solver for systems of equations. In PyTorch this is done by the command solve, demonstrated below. \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "outputs": [],
+   "source": [
+    "n = 5 # The size of the linear system\n",
+    "A = torch.randn(n) + torch.eye(n)\n",
+    "b = torch.randn(n)\n",
+    "b = b.unsqueeze(1) # note - solve expects a matrix for b\n",
+    "x, LU = torch.solve(b,A)  \n",
+    "\n",
+    "# Check accuracy\n",
+    "r = torch.matmul(A,x) - b\n",
+    "err = torch.norm(r)/torch.norm(b)\n",
+    "print(n,err.item())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Class assignment\n",
+    "Modify the code above and change  $n= 2^j, \\ j=2,\\ldots,12$ and plot the error as a function of $j$. What do you observe?\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "outputs": [],
+   "source": [
+    "for j in range(2,13):\n",
+    "    n = 2**j\n",
+    "    ## Your code\n",
+    "    \n",
+    "# plt.plot ...    "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Back to the backward Euler method\n",
+    "We now return to the backward Euler method. Using the solution of the linear systems we can now easily program the backward Euler method as"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def backEuler(y0,fun,Afun,h,n):\n",
+    "    k = y0.shape[0]\n",
+    "    Y = torch.zeros(k,n+1)\n",
+    "    Y[:,0] = y0\n",
+    "    \n",
+    "    t = 0.0\n",
+    "    for j in range(n):\n",
+    "        A = Afun(t)\n",
+    "        M = torch.eye(k) - h*A\n",
+    "        b = Y[:,j] + h*fun(t+h)\n",
+    "        x, LU = torch.solve(b.unsqueeze(1), M) \n",
+    "        Y[:,j+1] = x.squeeze(1)\n",
+    "        t += h\n",
+    "\n",
+    "    return Y"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We can test the method by defining a matrix and a forcing function and then solve the problem"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def forceFun(t):\n",
+    "    return torch.zeros(2)\n",
+    "\n",
+    "def AmatFun(t):\n",
+    "    A = torch.tensor([[-2.0, 1],[1, -2.0]])\n",
+    "    return A"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "h = 0.1; n = np.int(3/h)\n",
+    "Y = backEuler(y0,forceFun,AmatFun,h,n)\n",
+    "\n",
+    "t = np.arange(0,n+1)*h\n",
+    "plt.plot(t,Y[0,:],t,Y[1,:]);"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Class assignment\n",
+    "\n",
+    "We claimed that the backward Euler method is unconditionally stable. Demonstrate that by chaging $h$ and viewing the results.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Homework assignment\n",
+    "\n",
+    "Write a similar code to the backward Euler that uses the trapezoidal method.\n",
+    "\n",
+    "Given the problem\n",
+    "$$ \\dot y = A y \\quad y(0) = y_0 $$\n",
+    "with \n",
+    "$$ A = \\begin{pmatrix} 0 & 1 \\\\ -1 & 0 \\end{pmatrix} $$\n",
+    "and $y_0 = [0,1]$  test and compare the 3 methods for $h=10^{-j}, j=[1,2,3,4]$ when integrating\n",
+    "the system in the interval $t = [0,10]$\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:percent",
+   "notebook_metadata_filter": "all,-language_info,-toc,-latex_envs"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

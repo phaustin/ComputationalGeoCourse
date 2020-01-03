@@ -1,0 +1,102 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Initial setup\n",
+    "\n",
+    "\n",
+    "1. Install miniconda for you architecture:  https://docs.conda.io/en/latest/miniconda.html\n",
+    "\n",
+    "## For MacOS\n",
+    "\n",
+    "a. Start a terminal and type:\n",
+    "\n",
+    "```\n",
+    "conda install git\n",
+    "```\n",
+    "\n",
+    "b. cd to your home directory and make a folder called repos\n",
+    "\n",
+    "```\n",
+    "mkdir repos\n",
+    "cd repos\n",
+    "```\n",
+    "\n",
+    "c. clone the course repository and cd into it\n",
+    "\n",
+    "```\n",
+    "git clone https://github.com/eldadHaber/ComputationalGeoCourse\n",
+    "cd ComputationalGeoCourse\n",
+    "```\n",
+    "\n",
+    "d. checkout the pha branch\n",
+    "\n",
+    "```\n",
+    "git checkout -b pha origin/pha\n",
+    "```\n",
+    "\n",
+    "e. cd to the conda folder and create and activate the e213 environment\n",
+    "\n",
+    "```\n",
+    "cd conda\n",
+    "conda env create -f environment.yml\n",
+    "conda activate e213\n",
+    "```\n",
+    "\n",
+    "f. change back to the notebooks folder and start jupyter\n",
+    "\n",
+    "```\n",
+    "cd ../notebooks\n",
+    "jupyter notebook\n",
+    "```\n",
+    "\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "cell_metadata_filter": "all",
+   "notebook_metadata_filter": "all,-language_info,-toc,-latex_envs",
+   "text_representation": {
+    "extension": ".py",
+    "format_name": "percent",
+    "format_version": "1.3",
+    "jupytext_version": "1.3.0"
+   }
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.6"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
