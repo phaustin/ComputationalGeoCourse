@@ -95,7 +95,21 @@
 #
 # ## Making the course website
 #
+# The notebooks (ipynb) and any restructured text (rst) and markdown (md) files are assembled
+# into a website using [nbsphinx](https://nbsphinx.readthedocs.io/en/0.5.0/).  To build and
+# deploy with github-pages:
 #
+# 1. `cd ComputationalGeoCourse/docs`
+# 2. `./build_website.sh`
+#
+# Check the local versions by opeing _build/index.html in chrome
+#
+# ## Deploy to github
+#
+# Once you're ready to move it to github do
+#
+# `cd ComputationalGeoCourse/docs`
+# `./push_pages.sh`
 #
 # # Initial setup for student
 #

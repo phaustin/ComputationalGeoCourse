@@ -1,2 +1,5 @@
 notebook_docs_filelist.json
 notebook_filelist.json
+*.ipynb
+docs/doc_notebooks/week1/*
+
