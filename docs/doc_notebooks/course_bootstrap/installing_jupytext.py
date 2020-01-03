@@ -16,15 +16,133 @@
 # ---
 
 # %% [markdown]
-# # Using jupytext
+# # Initial setup for instructors
 #
-# ## Basic workflow
+# If you aren't familiar with how jupytext works, it would be good 
+# to spend some time at https://jupytext.readthedocs.io/en/latest/?badge=latest
 #
-# 1) always launch the py version of the notebook, treat the ipynb file as
-#    readonly storage
-#    
-# 2) always commit the py version to git, never the ipynb version
+# The notes below show how to bootstrap a repository with notebooks only committed
+# as python files.  That means that the first time through, we need to convert and
+# execute the ipynb versions.  Subsequently, jupyter will handle this through
+# the modified jupyter_notebook_config.py described below.
 #
-# 3) ...
-
-# %%
+# ## installation
+#
+# 1. Install miniconda if you don't have it -- note that our environment
+#    will be 100% conda-forge, so you don't want to use a large existing
+#    anaconda installation to create the e213 environment.
+#
+# 2. clone the repo:
+#
+# ```
+# git clone https://github.com/eldadHaber/ComputationalGeoCourse
+# cd ComputationalGeoCourse
+# ```
+#
+# 3. cd to the `course_utils` folder and create and activate the e213 environment
+#
+# ```
+# cd course_utils
+# conda env create -f e213.yml
+# conda activate e213
+# ```
+#
+# 4. Make sure you have a jupyter config folder
+#
+# ```
+# jupyter notebook --generate-config
+# ```
+#
+# This should put a `jupyter_notebook_config.py` file in your `~/.jupyter` folder
+#
+# 5. Replace the config with the one in conda_utils
+#
+# ```
+# cp conda_utils/jupyter_notebook_config.py ~/.jupyter/.
+# ```
+#
+# ## Building the notebooks
+#
+# We need to track three different flavors of notebook:
+#
+# a) Student versions
+# b) Notebooks with solutions
+# c) Documentation notebooks for website
+#
+# At the moment there are two sets, the student notebooks are in
+# `ComputationalGeoCourse/notebooks` and the documentation notebooks
+# are in `ComputationalGeoCourse/docs/docs_notebooks`
+#
+# To build from scratch, we need to convert the py files to ipynb files.
+#
+# To do this:
+#
+# 1. `cd ComputationalGeoCourse`
+# 2. `python scripts/find_notebooks.py notebooks notebook_filelist.json --initial`
+#
+# This should create an ipynb file for every py file and a new json
+# file calle `notebook_filelist.json`.  We need to execute
+# these, at this point we can suppress all errors:
+#
+# `python scripts/jup_build.py exec-noerrors-nb notebook_filelist.json`
+#
+# Repeat this for the docs notebooks:
+#
+# ```
+# python scripts/jup_build.py exec-noerrors-nb notebook_docs_filelist.json
+# python scripts/jup_build.py exec-noerrors-nb notebook_filelist.json
+# ```
+#
+# ## Making the course website
+#
+#
+#
+# # Initial setup for student
+#
+#
+# 1. Install miniconda for you architecture:  https://docs.conda.io/en/latest/miniconda.html
+#
+# ## For MacOS
+#
+# a. Start a terminal and type:
+#
+# ```
+# conda install git
+# ```
+#
+# b. cd to your home directory and make a folder called repos
+#
+# ```
+# mkdir repos
+# cd repos
+# ```
+#
+# c. clone the course repository and cd into it
+#
+# ```
+# git clone https://github.com/eldadHaber/ComputationalGeoCourse
+# cd ComputationalGeoCourse
+# ```
+#
+# d. checkout the pha branch
+#
+# ```
+# git checkout -b pha origin/pha
+# ```
+#
+# e. cd to the course folder and create and activate the e213 environment
+#
+# ```
+# cd conda
+# conda env create -f e213.yml
+# conda activate e213
+# ```
+#
+# f. change back to the notebooks folder and start jupyter
+#
+# ```
+# cd ../notebooks
+# jupyter notebook
+# ```
+#
+#
