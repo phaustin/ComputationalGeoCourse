@@ -261,7 +261,7 @@
     {
      "data": {
       "text/plain": [
-       "<matplotlib.colorbar.Colorbar at 0x122ec19d0>"
+       "<matplotlib.colorbar.Colorbar at 0x125cbf4d0>"
       ]
      },
      "execution_count": 7,
