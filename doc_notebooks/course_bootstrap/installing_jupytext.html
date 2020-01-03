@@ -85,13 +85,10 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../course_bootstrap.html">Getting started</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Initial setup for instructors</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installation">installation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Building-the-notebooks">Building the notebooks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Making-the-course-website">Making the course website</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Initial-setup-for-student">Initial setup for student</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#For-MacOS">For MacOS</a></li>
 </ul>
 </li>
@@ -251,16 +248,16 @@
 <h2>Making the course website<a class="headerlink" href="#Making-the-course-website" title="Permalink to this headline">¶</a></h2>
 <p>The notebooks (ipynb) and any restructured text (rst) and markdown (md) files are assembled into a website using <a class="reference external" href="https://nbsphinx.readthedocs.io/en/0.5.0/">nbsphinx</a>. To build and deploy with github-pages:</p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">ComputationalGeoCourse</span></code></p></li>
-<li><p>`./</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">ComputationalGeoCourse/docs</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">./build_website.sh</span></code></p></li>
 </ol>
-</div>
-</div>
-<div class="section" id="Initial-setup-for-student">
-<h1>Initial setup for student<a class="headerlink" href="#Initial-setup-for-student" title="Permalink to this headline">¶</a></h1>
+<p>and push to github</p>
 <ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">ComputationalGeoCourse/docs</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">./push_pages.sh</span></code></p></li>
 <li><p>Install miniconda for you architecture: <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">https://docs.conda.io/en/latest/miniconda.html</a></p></li>
 </ol>
+</div>
 <div class="section" id="For-MacOS">
 <h2>For MacOS<a class="headerlink" href="#For-MacOS" title="Permalink to this headline">¶</a></h2>
 <ol class="loweralpha simple">
