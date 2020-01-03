@@ -74,12 +74,14 @@ def print_files(file_glob):
 @click.command()
 @click.argument("notebook_path", type=str, nargs=1)
 @click.argument("json_file", type=click.File("w"), nargs=1)
-def main(notebook_path, json_file):
+@click.option('--initial/--no-initial', default=False,
+              help="set --initial if no ipynb files present (initial checkout)")
+def main(notebook_path, json_file,initial):
     """
     \b
     descend a folder with ipynb files and create a jupytext py:percent file
     if one doesn't exist, or if an existing py:percent file is older than
-    the ipynb file.  Write the py:percent file paths to json_file
+    the ipynb file.  Write the py:percent file paths to an ipynb json_file
     \b
     notebook_path is folder containing notebooks
     json_file is the path to a json_file to write info to
@@ -97,6 +99,25 @@ def main(notebook_path, json_file):
         for item in notebook_path.glob("**/*.ipynb")
         if checkpoint_filter(item)
     ]
+    #
+    # if fresh git checkout, need to generate all ipynb files
+    #
+    if initial:
+        if len(ipynb_files) > 0:
+            raise ValueError(f"--initial flag is set but see {ipynb_files}")
+        py_files = [
+            item
+            for item in notebook_path.glob("**/*.py")
+        ]
+        for the_file in py_files:
+            print(f"creating {the_file.with_suffix('.ipynb')}")
+            jupytext(['--to','notebook',str(the_file)])
+            ipynb_files = [
+               item
+               for item in notebook_path.glob("**/*.ipynb")
+               if checkpoint_filter(item)
+            ]
+
     py_files = [item.with_suffix(".py") for item in ipynb_files]
     for py_file, ipynb_file in zip(py_files, ipynb_files):
         #
@@ -114,6 +135,7 @@ def main(notebook_path, json_file):
         file_list=[str(item) for item in py_files]
     )
     json.dump(the_dict, json_file, indent=4)
+    print(f"wrote json file: {json_file.name}")
 
 
 if __name__ == "__main__":

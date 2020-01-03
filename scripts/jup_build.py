@@ -73,7 +73,7 @@ def py2ipynb(filenames_json):
     convert a list of jupytext files in filenames.json to ipynb files
     """
     file_dict = json.load(filenames_json)
-    py_list = [item["py_file"] for item in file_dict["file_list"]]
+    py_list = [item for item in file_dict["file_list"]]
     for pyfile in py_list:
         print(f"working on {pyfile}")
         jupytext([pyfile, "--to", "notebook"])
@@ -88,7 +88,7 @@ def exec_noerrors_nb(filenames_json):
     ignoring exceptions
     """
     file_dict = json.load(filenames_json)
-    py_list = [Path(item["py_file"]) for item in file_dict["file_list"]]
+    py_list = [Path(item) for item in file_dict["file_list"]]
     ipynb_list = make_suffix_list(py_list,'.ipynb')
     pp = Execute_ignore_errors()
     exec_nb(ipynb_list,pp)
@@ -103,7 +103,7 @@ def ipynb2html(filenames_json):
     to html
     """
     file_dict = json.load(filenames_json)
-    py_list = [Path(item["py_file"]) for item in file_dict["file_list"]]
+    py_list = [Path(item) for item in file_dict["file_list"]]
     ipynb_list = make_suffix_list(py_list,'.ipynb')
     make_html(ipynb_list)
 
@@ -140,7 +140,7 @@ def make_table(filenames_json):
     out_dir = Path("viewtable")
     out_dir.mkdir(parents=True, exist_ok=True)
     file_dict = json.load(filenames_json)
-    py_list = [Path(item["py_file"]) for item in file_dict["file_list"]]
+    py_list = [Path(item) for item in file_dict["file_list"]]
     html_list = make_suffix_list(py_list, '.html')
     py_links = [make_link(item) for item in py_list]
     html_links = [make_link(item) for item in html_list]

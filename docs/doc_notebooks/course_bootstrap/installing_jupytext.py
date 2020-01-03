@@ -89,8 +89,8 @@
 # Repeat this for the docs notebooks:
 #
 # ```
+# python scripts/find_notebooks.py docs/doc_notebooks notebook_docs_filelist.json --initial
 # python scripts/jup_build.py exec-noerrors-nb notebook_docs_filelist.json
-# python scripts/jup_build.py exec-noerrors-nb notebook_filelist.json
 # ```
 #
 # ## Making the course website
