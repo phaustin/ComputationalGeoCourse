@@ -15,19 +15,17 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import cloud_sptheme as csp
-import jupytext
 
 # -- Project information -----------------------------------------------------
 
-project = "Scientific python tutorial"
-copyright = "David J Pine"
-author = "David Pine"
+project = "E213 course"
+copyright = "E213 project"
+author = "E213 Project"
 
 # The short X.Y version
 version = ""
 # The full version, including alpha/beta/rc tags
-release = "1.0"
+release = "0.1"
 
 
 # -- General configuration ---------------------------------------------------
