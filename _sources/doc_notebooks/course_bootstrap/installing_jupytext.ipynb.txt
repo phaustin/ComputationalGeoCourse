@@ -131,7 +131,7 @@
     "Note that I've removed the master branch from the repo and made \"downloads\" the default branch\n",
     "so we don't get confused between this and our master branch version of the students folder.\n",
     "\n",
-    "**Important point -- you can commit new notebooks to the student folder as part of a numeric branch, but push_students.sh makes a separate commit of every file in the folder and completely overwrites the remote\n",
+    "**Important point -- you can commit new notebooks to the student folder as part of an e213 branch, but push_students.sh makes a separate commit of every file in the folder and completely overwrites the remote\n",
     "branch for every push.  So treat everything on the remote branch as ephemeral.**\n",
     "\n",
     "# Student installs\n",
