@@ -148,51 +148,83 @@
 #
 # # Student installs
 #
-# 1. Install miniconda for you architecture:  https://docs.conda.io/en/latest/miniconda.html
+# **If you already have conda or anaconda installed, skip to `Git install` below**
 #
-# ## For MacOS
 #
-# a. Start a terminal and type:
+#
+# ## For MacOS new installs
+#
+#
+# 1. Download miniconda from  https://docs.conda.io/en/latest/miniconda.html  -- choose the `Miniconda3 MacOSX 64-bit pkg` file from the menu and run it, agreeing to the licences and accepting all defaults. You should install for "just me"
+#
+# 1. To test your installation, open a fresh terminal window and at the prompt type `which conda`.  You should see something resembling the following output, with your username instead of `phil`:
+#
+# ```
+# % which conda
+# /Users/phil/opt/miniconda3/bin/conda
+# ```
+#
+# ## For Windows new installs
+#
+# 1. Download miniconda from  https://docs.conda.io/en/latest/miniconda.html  -- choose the `Miniconda3 Windows 64-bit`. download from the menu and run it, agreeing to the licences and accepting all defaults.
+#
+# The installer should suggest installing in a path that looks like:
+#
+# ```
+# C:\Users\phil\Miniconda3
+# ```
+#
+# 2. Once the install completes hit the windows key and start typing `anaconda`.  You should see a shortcut that looks like:
+#
+# ```
+# Anaconda Powershell Prompt
+# (Miniconda3)
+# ```
+#
+# **Note that Windows comes with two different terminals `cmd` (old) and `powershell` (new).  Always select the powershell version of the anaconda terminal**
+#
+# 3. Select the short cut.  If the install was successful you should see something like:
+#
+# ```
+# (base) (Miniconda3):Users/phil>
+# ```
+# with your username substituted for phil.
+#
+# ## Git install
+#
+# Inside your powershell or MacOs terminal, install git using conda:
 #
 # ```
 # conda install git
 # ```
 #
-# b. cd to your home directory and make a folder called repos
+# ## Setting up the course repository
+#
+# In the terminal, change directories to your home directory (called `~` for short) and make a new directory
+# called `repos` to hold the course notebook repository.  Change into `repos` and clone the course:
 #
 # ```
+# cd ~
 # mkdir repos
 # cd repos
+# git clone https://github.com/phaustin/e213_students.git
 # ```
 #
-# c. clone the course repository and cd into it
+# ## Creating the course environment
+#
+# In the terminal, execute the following commands:
 #
 # ```
-# git clone https://github.com/eldadHaber/ComputationalGeoCourse
-# cd ComputationalGeoCourse
-# ```
-#
-# d. checkout the pha branch
-#
-# ```
-# git checkout -b pha origin/pha
-# ```
-#
-# e. cd to the course folder and create and activate the e213 environment
-#
-# ```
-# cd conda
+# cd e213_students/utils
 # conda env create -f e213.yml
 # conda activate e213
 # ```
 #
-# f. change back to the notebooks folder and start jupyter
+# ## Opening the notebook folder
 #
 # ```
-# cd ../notebooks
+# cd ~/repos/e213_students/e213_notebooks
 # jupyter notebook
 # ```
 #
-#
 
-# %%
